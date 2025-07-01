@@ -1,0 +1,1 @@
+<ProjectReference Include="..\..\Shared\MicroservicesDemo.Shared\MicroservicesDemo.Shared.EFCore.csproj" /> 
