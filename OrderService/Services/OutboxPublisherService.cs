@@ -1,14 +1,6 @@
 using Microsoft.EntityFrameworkCore;
-using Microsoft.Extensions.DependencyInjection;
-using Microsoft.Extensions.Hosting;
 using OrderService.Data;
-using OrderService.Models;
-using System;
-using System.Net.Http;
 using System.Text;
-using System.Text.Json;
-using System.Threading;
-using System.Threading.Tasks;
 
 namespace OrderService.Services
 {
@@ -52,7 +44,7 @@ namespace OrderService.Services
                         }
                         catch
                         {
-                            // Log o ignorar para reintentar en el siguiente ciclo
+                            
                         }
                     }
                 }

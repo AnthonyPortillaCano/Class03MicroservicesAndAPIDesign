@@ -22,6 +22,7 @@ namespace OrderService.Commands
             order.CustomerName = request.CustomerName;
             order.Product = request.Product;
             order.Quantity = request.Quantity;
+            _context.Orders.Update(order);
             await _context.SaveChangesAsync(cancellationToken);
             return true;
         }
