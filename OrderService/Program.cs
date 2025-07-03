@@ -2,6 +2,7 @@ using OrderService.Data;
 using Microsoft.EntityFrameworkCore;
 using MediatR;
 using System.Reflection;
+using MassTransit;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -22,6 +23,16 @@ builder.Services.AddSwaggerGen();
 
 builder.Services.AddHttpClient();
 builder.Services.AddHostedService<OrderService.Services.OutboxPublisherService>();
+
+// MassTransit configuration to use RabbitMQ as the event/message bus
+builder.Services.AddMassTransit(x =>
+{
+    // Configure RabbitMQ as the transport
+    x.UsingRabbitMq((context, cfg) =>
+    {
+        cfg.Host("rabbitmq://localhost"); // Connect to local RabbitMQ instance
+    });
+});
 
 builder.Services.AddControllers();
 

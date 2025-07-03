@@ -2,6 +2,8 @@ using NotificationService.Data;
 using Microsoft.EntityFrameworkCore;
 using MediatR;
 using System.Reflection;
+using MassTransit;
+using Shared;
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
@@ -18,6 +20,20 @@ builder.Services.AddMediatR(cfg => cfg.RegisterServicesFromAssembly(Assembly.Get
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
+
+// MassTransit configuration to use RabbitMQ and register the event consumer
+builder.Services.AddMassTransit(x =>
+{
+    x.AddConsumer<OrderCreatedConsumer>(); // Register the consumer for OrderCreatedEvent
+    x.UsingRabbitMq((context, cfg) =>
+    {
+        cfg.Host("rabbitmq://localhost"); // Connect to local RabbitMQ instance
+        cfg.ReceiveEndpoint("order-created-queue", e =>
+        {
+            e.ConfigureConsumer<OrderCreatedConsumer>(context); // Bind consumer to queue
+        });
+    });
+});
 
 builder.Services.AddControllers();
 

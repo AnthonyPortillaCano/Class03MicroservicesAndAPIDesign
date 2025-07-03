@@ -6,15 +6,18 @@ using System.Threading;
 using System.Threading.Tasks;
 using Shared;
 using System.Text.Json;
+using MassTransit;
 
 namespace OrderService.Commands
 {
     public class CreateOrderCommandHandler : IRequestHandler<CreateOrderCommand, Guid>
     {
         private readonly OrderDbContext _context;
-        public CreateOrderCommandHandler(OrderDbContext context)
+        private readonly IBus _bus; // MassTransit bus for publishing events to RabbitMQ
+        public CreateOrderCommandHandler(OrderDbContext context, IBus bus)
         {
             _context = context;
+            _bus = bus;
         }
 
         public async Task<Guid> Handle(CreateOrderCommand request, CancellationToken cancellationToken)
@@ -33,6 +36,8 @@ namespace OrderService.Commands
             var orderCreatedEvent = new OrderCreatedEvent
             {
                 OrderId = order.Id,
+                UserId = request.UserId,
+                Amount = request.Amount,
                 CustomerName = order.CustomerName,
                 Product = order.Product,
                 Quantity = order.Quantity,
@@ -49,6 +54,10 @@ namespace OrderService.Commands
             _context.OutboxEvents.Add(outboxEvent);
 
             await _context.SaveChangesAsync(cancellationToken);
+
+            // Publish the event to RabbitMQ using MassTransit
+            await _bus.Publish(orderCreatedEvent);
+
             return order.Id;
         }
     }

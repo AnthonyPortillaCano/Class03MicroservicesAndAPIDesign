@@ -59,11 +59,11 @@ namespace NotificationService.Controllers
         [HttpPost("from-event")]
         public async Task<IActionResult> ReceiveOrderCreatedEvent([FromBody] OrderCreatedEvent evt)
         {
-            // Create Notification by the event
+            // Crear notificación a partir del evento
             var command = new CreateNotificationCommand
             {
-                UserId = Guid.NewGuid(),
-                Message = $"New order created: {evt.Product} x{evt.Quantity} para {evt.CustomerName}",
+                UserId = Guid.NewGuid(), // Aquí podrías mapear a un usuario real si lo tienes
+                Message = $"Nueva orden creada: {evt.Product} x{evt.Quantity} para {evt.CustomerName}",
             };
             await _mediator.Send(command);
             return Ok();

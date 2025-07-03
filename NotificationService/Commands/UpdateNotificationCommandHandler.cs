@@ -21,7 +21,6 @@ namespace NotificationService.Commands
             if (notification == null) return false;
             notification.Message = request.Message;
             notification.IsRead = request.IsRead;
-            _context.Notifications.Update(notification);
             await _context.SaveChangesAsync(cancellationToken);
             return true;
         }
